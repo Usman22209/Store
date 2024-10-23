@@ -1,29 +1,47 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState: {
-    username: '',
-    password: '',
-    users: [],
+    inputVal: "",
+    selectedCategories: ["dress", "food", "drink", "mobile"],
+    allData: [],
+    Cart: []
   },
   reducers: {
-    setUsername: (state, action) => {
-      state.username = action.payload;
+    setInput: (state, action) => {
+      state.inputVal = action.payload;
     },
-    setPassword: (state, action) => {
-      state.password = action.payload;
+    toggleCategory: (state, action) => {
+      const category = action.payload;
+      if (state.selectedCategories.includes(category)) {
+        state.selectedCategories = state.selectedCategories.filter(
+          (cat) => cat !== category
+        );
+      } else {
+        state.selectedCategories.push(category);
+      }
     },
-    addUser: (state, action) => {
-      state.users.push(action.payload);
+    setAllData: (state, action) => {
+      state.allData = action.payload;
     },
-    resetUsers: (state) => {
-      state.users = [];
-      state.username = '';
-      state.password = '';
+    addtoCart: (state, action) => {
+      const item = action.payload;
+      const itemExists = state.Cart.find(cartItem => cartItem.id === item.id);
+      if (!itemExists) {
+        state.Cart.push(item);
+      } else {
+        itemExists.quantity += item.quantity;
+      }
+    },
+    removeFromCart: (state, action) => {
+      const itemId = action.payload; // Use itemId directly as payload
+      state.Cart = state.Cart.filter(cartItem => cartItem.id != itemId); // Filter by itemId
+      console.log(state.Cart);
+      
     },
   },
 });
 
-export const { setUsername, setPassword ,addUser,resetUsers} = userSlice.actions;
+export const { setInput, toggleCategory, setAllData, addtoCart, removeFromCart } = userSlice.actions;
 export default userSlice.reducer;
