@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, Image,ScrollView } from "react-native";
 import Seprater from "../components/Seprater";
 import CartButtton from "../components/CartButton";
 import StarRating from "../components/StarRating";
+
 const DetailPage = ({ route }) => {
+
   const { item } = route.params; // Get the item passed through navigation
   const { name, price, size, img,rating,reviews,description } = item;
 

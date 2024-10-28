@@ -1,14 +1,21 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { removeFromCart } from "../reducer/userReducer";
+import { useDispatch } from "react-redux";
+import { removeFromCart,incrementQuantity,decrementQuantity} from "../reducer/userReducer";
 
-const CartCard = ({ item }) => {
+const CartCard = ({ item, increaseQuantity, decreaseQuantity }) => {
   const dispatch = useDispatch();
   const { img, name, price, size, quantity } = item;
+
   const handleremove = (item) => {
     dispatch(removeFromCart(item.id));
   };
+  const handleIncreaseQuantity = (item) => {
+      dispatch(incrementQuantity(item.id));
+  }
+  const handledecreaseQuantity = (item) => {
+      dispatch(decrementQuantity(item.id));
+  }
   return (
     <View style={styles.mainContainer}>
       <View>
@@ -34,6 +41,17 @@ const CartCard = ({ item }) => {
         >
           <Text style={styles.remove}>Remove</Text>
         </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={() => handledecreaseQuantity(item)} style={styles.button}>
+            <Text style={styles.buttonText}>-</Text>
+          </TouchableOpacity>
+          <Text style={styles.quantity}>
+            {quantity < 10 ? `0${quantity}` : quantity}
+          </Text>
+          <TouchableOpacity onPress={() => handleIncreaseQuantity(item)} style={styles.button}>
+            <Text style={styles.buttonText}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -95,6 +113,23 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     textAlign: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  button: {
+    paddingHorizontal: 10,
+  },
+  buttonText: {
+    fontSize: 18,
+    color: "#000",
+  },
+  quantity: {
+    fontSize: 16,
+    color: "#000",
+    marginHorizontal: 10,
   },
 });
 

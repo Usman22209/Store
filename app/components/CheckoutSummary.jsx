@@ -1,17 +1,19 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { emptyCart } from '../reducer/userReducer';
 
 const CheckoutSummary = () => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.user.Cart);
-  const sum = cart.reduce((total, item) => total + item.price, 0);
+  const sum = cart.reduce((total, item) => total + item.price*item.quantity, 0);
+  const itemsnum=cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <View style={styles.container}>
       <Text style={styles.totalText}>Total: ${sum.toFixed(2)}</Text>
-      <Text style={styles.itemsText}>({cart.length} items)</Text>
-      <TouchableOpacity style={styles.button}>
+      <Text style={styles.itemsText}>({itemsnum} items)</Text>
+      <TouchableOpacity style={styles.button} onPress={handle}>
         <Text style={styles.buttonText}>Proceed To Checkout</Text>
       </TouchableOpacity>
     </View>

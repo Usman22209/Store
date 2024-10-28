@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useDispatch,useSelector } from "react-redux";
 import { addtoCart } from "../reducer/userReducer";
-
+import { useNavigation } from "expo-router";
 const CartButton = ({ item }) => {
+  const navigation = useNavigation();
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.user.Cart);
   const [quantity, setQuantity] = useState(1);
@@ -23,7 +24,7 @@ const CartButton = ({ item }) => {
   }, [quantity]);
   const handleCart = () => {
     dispatch(addtoCart(cartitem));
-    console.log(cart);
+    navigation.navigate("Cart");
     
   };
 

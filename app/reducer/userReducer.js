@@ -40,8 +40,25 @@ const userSlice = createSlice({
       console.log(state.Cart);
       
     },
+    incrementQuantity: (state, action) => {
+      const itemId = action.payload; 
+      const item = state.Cart.find(cartItem => cartItem.id === itemId);
+      if (item) {
+        item.quantity++;
+      }
+    },
+    decrementQuantity: (state, action) => {
+      const itemId = action.payload; 
+      const item = state.Cart.find(cartItem => cartItem.id === itemId);
+      if (item && item.quantity > 1) {
+        item.quantity--;
+      }
+    },
+    emptyCart: (state) => {
+      state.Cart = [];
+    }
   },
 });
 
-export const { setInput, toggleCategory, setAllData, addtoCart, removeFromCart } = userSlice.actions;
+export const { setInput, toggleCategory, setAllData, addtoCart, removeFromCart,incrementQuantity,decrementQuantity,emptyCart } = userSlice.actions;
 export default userSlice.reducer;

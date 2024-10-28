@@ -20,8 +20,10 @@ const App = () => {
             fontWeight: "bold", // Bold text
             fontSize: 22, // Title font size
             color: "white",
+          marginTop: '-35%',
           },
-          headerTitleAlign: "center", // Centers the title
+          headerTitleAlign: "center",
+          headerTintColor: "white",
         }}
       >
         <Stack.Screen
