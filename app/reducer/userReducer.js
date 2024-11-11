@@ -29,7 +29,7 @@ const userSlice = createSlice({
       const item = action.payload;
       const itemExists = state.Cart.find(cartItem => cartItem.id === item.id);
       if (!itemExists) {
-        state.Cart.push(item);
+        state.Cart.unshift(item);
       } else {
         itemExists.quantity += item.quantity;
       }

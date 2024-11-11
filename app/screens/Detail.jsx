@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, Image,ScrollView } from "react-native";
 import Seprater from "../components/Seprater";
 import CartButtton from "../components/CartButton";
 import StarRating from "../components/StarRating";
-
+import CustomHeader from "../components/CustomHeader";
+import typography from "../styles/Typo";
 const DetailPage = ({ route }) => {
 
   const { item } = route.params; // Get the item passed through navigation
@@ -11,21 +12,22 @@ const DetailPage = ({ route }) => {
 
   return (
     <ScrollView style={styles.container}>
+      <CustomHeader title={item.name} />
       <Image source={{ uri: img }} style={styles.img} />
       
       <View style={styles.titleContainer}>
         <View style={styles.subCont}>
-          <Text style={styles.nameText}>{name}</Text>
-          <Text style={styles.sizeText}>Size: {size}</Text>
+          <Text style={[styles.nameText, typography.Semibold]}>{name}</Text>
+          <Text style={[styles.sizeText, typography.regular]}>Size: {size}</Text>
         </View>
         <View style={styles.subCont}>
           <StarRating rating={rating}/>
-          <Text style={styles.reviewsText}>{reviews} Reviews</Text>
+          <Text style={[styles.reviewsText, typography.regular]}>{reviews} Reviews</Text>
         </View>
       </View>
       <Seprater />
-      <Text style={{fontWeight:"bold",fontSize:20,marginVertical:10}}>Product Descripton</Text>
-      <Text>{description}</Text>
+      <Text style={[{fontSize:20,marginVertical:10},typography.Semibold]}>Product Descripton</Text>
+      <Text style={[{fontSize:14},typography.regular]}>{description}</Text>
       <CartButtton item={item}/>
     </ScrollView>
   );
@@ -58,7 +60,6 @@ const styles = StyleSheet.create({
   },
   nameText: {
     fontSize: 20,
-    fontWeight: "bold",
     color: "#333",
   },
   sizeText: {

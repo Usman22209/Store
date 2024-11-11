@@ -4,40 +4,62 @@ import data from "../data/data.js"; // Make sure this path is correct
 import Card from "./Card.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import { setAllData } from "../reducer/userReducer.js";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
+import Animated, { FadeInDown, FadeOutUp, withSpring } from "react-native-reanimated";
+import typography from "../styles/Typo.js";
+
 const Items = () => {
   const dispatch = useDispatch();
-  const searchedData=useSelector(state=>state.user.inputVal)
-  
+  const searchedData = useSelector((state) => state.user.inputVal);
 
   useEffect(() => {
     dispatch(setAllData(data));
   }, [dispatch]);
 
-  const selectedCategories = useSelector((state) => state.user.selectedCategories);
+  const selectedCategories = useSelector(
+    (state) => state.user.selectedCategories
+  );
   const allData = useSelector((state) => state.user.allData);
 
-  // Filter the data based on selectedCategories
+  // Filter the data based on selectedCategories and search input
   const filteredData = allData
-  .filter(item => selectedCategories.includes(item.category)) // Check category match
-  .filter(item => item.name.toLowerCase().includes(searchedData.toLowerCase())); // Check name match with search input
+    .filter((item) => selectedCategories.includes(item.category)) // Check category match
+    .filter((item) =>
+      item.name.toLowerCase().includes(searchedData.toLowerCase())
+    ); // Check name match with search input
 
- 
   const renderItem = ({ item }) => (
-    <View style={styles.item}>
+    <Animated.View
+      style={[styles.item]}
+      entering={FadeInDown.springify().stiffness(300).damping(30)} // Animation for entering card
+      exiting={FadeOutUp.springify().stiffness(300).damping(30)} // Animation for exiting card
+    >
       <Card item={item} />
-    </View>
+    </Animated.View>
   );
 
   return (
     <View>
-      <Text style={styles.title}>Total Items: {filteredData.length}</Text>
+      <View style={{ flexDirection: "row", width: "auto" }}>
+        <Text style={[styles.title, typography.Semibold, { marginRight: -20 }]}>
+          Total Items:
+        </Text>
+        <Animated.Text
+          style={[styles.title, typography.regular]}
+          entering={FadeInDown.springify().stiffness(300).damping(30)} // Animation for entering count
+          exiting={FadeOutUp.springify().stiffness(300).damping(30)} // Animation for exiting count
+          key={filteredData.length}
+        >
+          {filteredData.length}
+        </Animated.Text>
+      </View>
       <FlatList
         data={filteredData}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         numColumns={1} // Ensure single column
         contentContainerStyle={styles.container}
+        extraData={filteredData} // Ensure re-render when data changes
       />
     </View>
   );
@@ -46,21 +68,14 @@ const Items = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    paddingTop: 5,
     backgroundColor: "#EEEEEE",
     paddingBottom: 150,
   },
   item: {
-    flex: 1,
-    margin: 10,
-    padding: 15,
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 20,
     paddingLeft: 30,
     paddingVertical: 15,
   },

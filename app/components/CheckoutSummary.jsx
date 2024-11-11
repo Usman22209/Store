@@ -1,18 +1,19 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { emptyCart } from "../reducer/userReducer";
 import { useNavigation } from "expo-router";
 import FlashMessage, { showMessage } from "react-native-flash-message";
+import typography from "../styles/Typo"; // Import typography
+import Animated, { FadeInDown, FadeInLeft, FadeOutRight, FadeOutUp } from "react-native-reanimated";
+
 const CheckoutSummary = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.user.Cart);
-  const sum = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+  const sum = cart.reduce((total, item) => total + item.price * item.quantity, 0);
   const itemsnum = cart.reduce((total, item) => total + item.quantity, 0);
+
   const handle = () => {
     dispatch(emptyCart());
     if (cart.length > 0) {
@@ -24,8 +25,7 @@ const CheckoutSummary = () => {
       setTimeout(() => {
         navigation.navigate("Landing");
       }, 1000);
-      
-    }else{
+    } else {
       showMessage({
         message: "Cart is empty",
         type: "warning",
@@ -33,13 +33,39 @@ const CheckoutSummary = () => {
       });
     }
   };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.totalText}>Total: ${sum.toFixed(2)}</Text>
-      <Text style={styles.itemsText}>({itemsnum} items)</Text>
+      <View style={styles.totalContainer}>
+        <Text style={[styles.totalText, typography.bold]}>
+          Total:
+        </Text>
+        <Animated.Text
+          style={[styles.totalAmountText, typography.bold]}
+          entering={FadeInDown.springify().stiffness(300).damping(30)}
+          exiting={FadeOutUp.springify().stiffness(300).damping(30)}
+          key={sum}
+        >
+          {sum.toFixed(2)}$
+        </Animated.Text>
+      </View>
+<View style={{flexDirection:"row"}}>
+      <Animated.Text
+        style={[styles.itemsText, typography.regular]}
+        entering={FadeInLeft.springify().stiffness(300).damping(30)}
+        exiting={FadeOutRight.springify().stiffness(300).damping(30)}
+        key={itemsnum}
+      >
+        {itemsnum}&nbsp;
+      </Animated.Text>
+      <Text style={[styles.itemsText]}>Items</Text></View>
+
       <TouchableOpacity style={styles.button} onPress={handle}>
-        <Text style={styles.buttonText}>Proceed To Checkout</Text>
+        <Text style={[styles.buttonText, typography.Semibold]}>
+          Proceed To Checkout
+        </Text>
       </TouchableOpacity>
+
       <FlashMessage position="top" />
     </View>
   );
@@ -47,36 +73,53 @@ const CheckoutSummary = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#000080",
+    backgroundColor: "#1E2A47", // Darker background for better contrast
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 15,
     alignItems: "center",
     marginTop: 20,
     position: "absolute",
     bottom: 0,
     width: "100%",
+    shadowColor: "#000", // Subtle shadow for a floating effect
+    shadowOffset: { width: 0, height: -5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5, // For Android
+  },
+  totalContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
   },
   totalText: {
-    color: "#FFFFFF",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
+    color: "#fff",
+    fontSize: 26, // Larger font size for the total label
+  },
+  totalAmountText: {
+    color: "#fff", // Price text color
+    fontSize: 26, // Same font size for the amount
+    marginLeft: 5,
   },
   itemsText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    marginBottom: 20,
+    color: "#D1D1D1", // Lighter color for the items text
+    fontSize: 18,
+    marginBottom: 18,
   },
   button: {
-    backgroundColor: "#32CD32",
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    backgroundColor: "#66BB6A",
+    borderRadius: 10, // More rounded corners for a modern look
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    shadowColor: "#32CD32",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5, // For Android
   },
   buttonText: {
-    color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "bold",
+    color: "#fff",
+    fontSize: 20, // Larger text for better readability
   },
 });
 

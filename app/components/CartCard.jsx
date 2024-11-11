@@ -1,135 +1,159 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useDispatch } from "react-redux";
-import { removeFromCart,incrementQuantity,decrementQuantity} from "../reducer/userReducer";
+import { removeFromCart, incrementQuantity, decrementQuantity } from "../reducer/userReducer";
+import Animated, { FadeInLeft, FadeOutRight, Layout } from "react-native-reanimated";
+import typography from "../styles/Typo"; // Import typography
 
-const CartCard = ({ item, increaseQuantity, decreaseQuantity }) => {
+const CartCard = ({ item, animate }) => {
   const dispatch = useDispatch();
   const { img, name, price, size, quantity } = item;
 
-  const handleremove = (item) => {
+  const handleRemove = (item) => {
     dispatch(removeFromCart(item.id));
   };
+
   const handleIncreaseQuantity = (item) => {
-      dispatch(incrementQuantity(item.id));
-  }
-  const handledecreaseQuantity = (item) => {
-      dispatch(decrementQuantity(item.id));
-  }
+    dispatch(incrementQuantity(item.id));
+  };
+
+  const handleDecreaseQuantity = (item) => {
+    dispatch(decrementQuantity(item.id));
+  };
+
   return (
-    <View style={styles.mainContainer}>
+    <Animated.View
+      style={styles.mainContainer}
+      key={item.id}
+      entering={animate ? FadeInLeft.duration(500).damping(30).stiffness(100) : undefined}
+      exiting={FadeOutRight.duration(700).damping(50).stiffness(500)} // More noticeable exit
+      layout={Layout.springify()} // Add Layout transition for smoother animation
+    >
       <View>
         <Image source={{ uri: img }} style={styles.img} />
       </View>
       <View style={styles.textContainer}>
-        <Text style={styles.name}>{name}</Text>
+        <Text style={[styles.name, typography.bold]}>{name}</Text>
         <View style={styles.detailContainer}>
-          <Text style={styles.heading}>Size: </Text>
-          <Text style={styles.detail}>{size}</Text>
+          <Text style={[styles.heading, typography.Semibold]}>Size: </Text>
+          <Text style={[styles.detail, typography.regular]}>{size}</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.heading}>Price: </Text>
-          <Text style={styles.detail}>${price && price.toFixed(2)}</Text>
+          <Text style={[styles.heading, typography.Semibold]}>Price: </Text>
+          <Text style={[styles.detail, typography.regular]}>${price && price.toFixed(2)}</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.heading}>Quantity: </Text>
-          <Text style={styles.detail}>{quantity}</Text>
+          <Text style={[styles.heading, typography.Semibold]}>Quantity: </Text>
+          <Text style={[styles.detail, typography.regular]}>{quantity}</Text>
         </View>
         <TouchableOpacity
           style={styles.removeBtn}
-          onPress={() => handleremove(item)}
+          onPress={() => handleRemove(item)}
         >
-          <Text style={styles.remove}>Remove</Text>
+          <Text style={[styles.remove, typography.regular]}>Remove</Text>
         </TouchableOpacity>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={() => handledecreaseQuantity(item)} style={styles.button}>
-            <Text style={styles.buttonText}>-</Text>
+          <TouchableOpacity
+            onPress={() => handleDecreaseQuantity(item)}
+            style={styles.decrementButton}
+          >
+            <Text style={[styles.buttonText, typography.semibold]}>-</Text>
           </TouchableOpacity>
-          <Text style={styles.quantity}>
+          <Text style={[styles.quantity, typography.regular]}>
             {quantity < 10 ? `0${quantity}` : quantity}
           </Text>
-          <TouchableOpacity onPress={() => handleIncreaseQuantity(item)} style={styles.button}>
-            <Text style={styles.buttonText}>+</Text>
+          <TouchableOpacity
+            onPress={() => handleIncreaseQuantity(item)}
+            style={styles.incrementButton}
+          >
+            <Text style={[styles.buttonText, typography.semibold]}>+</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   img: {
-    width: 120,
-    height: 130,
+    width: 100,
+    height: 110,
     resizeMode: "cover",
-    borderRadius: 10,
+    borderRadius: 8,
   },
   mainContainer: {
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    width: "90%",
+    width: "85%",
     alignSelf: "center",
-    marginVertical: 10,
-    padding: 10,
+    marginVertical: 8,
+    padding: 12,
     borderRadius: 10,
-    backgroundColor: "#f8f8f8",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    backgroundColor: "#fff",
+    elevation: 4,
   },
   textContainer: {
-    marginLeft: 15,
+    marginLeft: 12,
     flex: 1,
   },
   name: {
-    fontWeight: "bold",
-    fontSize: 20,
+    fontSize: 16,
     color: "#333",
-    marginBottom: 5,
+    marginBottom: 4,
   },
   detailContainer: {
     flexDirection: "row",
-    marginBottom: 3,
+    marginBottom: 6,
+    alignItems: "center",
   },
   heading: {
-    fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 12,
     color: "#555",
+    marginRight: 4,
   },
   detail: {
-    fontSize: 16,
-    color: "#555",
+    fontSize: 12,
+    color: "#333",
   },
   removeBtn: {
-    backgroundColor: "#6C48C5",
-    padding: 5,
-    borderRadius: 5,
-    marginTop: 10,
+    backgroundColor: "#FF4D4D",
+    padding: 6,
+    borderRadius: 6,
+    marginTop: 8,
   },
   remove: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 12,
     textAlign: "center",
   },
   buttonContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 12, // Increased margin for spacing
   },
-  button: {
-    paddingHorizontal: 10,
+  decrementButton: {
+    backgroundColor: "#D3D3D3", // Light gray for decrement
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 6,
+    marginRight: 10,
+  },
+  incrementButton: {
+    backgroundColor: "#66BB6A", // Light green for increment
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 6,
+    marginLeft: 10,
   },
   buttonText: {
     fontSize: 18,
-    color: "#000",
+    color: "#fff",
   },
   quantity: {
     fontSize: 16,
     color: "#000",
-    marginHorizontal: 10,
+    marginHorizontal: 12,
   },
 });
 
